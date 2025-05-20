@@ -20,7 +20,7 @@ int main(int argc, char ** argv)
 
   // Create the MoveIt MoveGroup Interface
   using moveit::planning_interface::MoveGroupInterface;
-  auto move_group_interface = MoveGroupInterface(node, "manipulator");
+  auto move_group_interface = MoveGroupInterface(node, "ur_manipulator");
 
   // Set a target Pose
   auto const target_pose = []{
