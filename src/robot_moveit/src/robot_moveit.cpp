@@ -19,22 +19,16 @@ int main(int argc, char * argv[])
   using moveit::planning_interface::MoveGroupInterface;
   auto move_group_interface = MoveGroupInterface(node, "ur_manipulator");
 
-  // Set a target Pose
-  auto const target_pose = []{
-    geometry_msgs::msg::Pose msg;
-    msg.orientation. = 0.709;
-    msg.orientation.y = -0.705;
-    msg.orientation.z = -0.016;
-    msg.orientation.w = 0.008;
-    msg.position.x = 0.533;
-    msg.position.y = 0.115;
-    msg.position.z = 0.107;
-    return msg;
-  }();
-  
-  //move_group.setPlanningTime(5.0);
+  // Create a map of joint names to target values (in radians or meters)
+  std::map<std::string, double> target_joint_values;
+  target_joint_values["shoulder_lift_joint"] = -1.571; // radians
+  target_joint_values["elbow_joint"] = -0.000;
+  target_joint_values["wrist_1_joint"] = 0.000;
+  target_joint_values["wrist_2_joint"] = 0.000;
+  target_joint_values["wrist_3_joint"] = 0.000;
+  target_joint_values["shoulder_pan_joint"] = 0.000;
 
-  move_group_interface.setPoseTarget(target_pose);
+  move_group_interface.setJointValueTarget(target_joint_values);
   
   // Create a plan to that target pose
   auto const [success, plan] = [&move_group_interface]{
@@ -44,11 +38,11 @@ int main(int argc, char * argv[])
   }();
 
   // Execute the plan
-  //if(success) {
-    //move_group_interface.execute(plan);
-  //} else {
-    //RCLCPP_ERROR(logger, "Planning failed!");
-  //}
+  if(success) {
+    move_group_interface.execute(plan);
+  } else {
+    RCLCPP_ERROR(logger, "Planning failed!");
+  }
 
   // Shutdown ROS
   rclcpp::shutdown();
