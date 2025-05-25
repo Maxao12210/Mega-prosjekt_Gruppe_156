@@ -34,6 +34,8 @@ setup(
         'console_scripts': [
             'camera_node = camera_node.camera_node:main',
             'robot_controller = robot_control.robot_controller:main',
+            'box_detection_node = camera_node.box_detection_node:main',
+            'coordinator_test_node = camera_node.coordinator_test_node:main',
         ],
     },
 )
