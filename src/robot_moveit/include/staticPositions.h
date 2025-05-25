@@ -10,6 +10,7 @@
 
 class staticPositions  {
     public:
+        std::string name = "Static position";
         double shoulderPanJoint = 0.0;
         double shoulderLiftJoint = 0.0;
         double elbowJoint = 0.0;
@@ -17,7 +18,8 @@ class staticPositions  {
         double wrist2Joint = 0.0;
         double wrist3Joint = 0.0;
 
-    void changeValues (double shoulderPan, double shoulderLift, double elbow, double wrist1, double wrist2, double wrist3){
+    void changeValues (const std::string& newName, double shoulderPan, double shoulderLift, double elbow, double wrist1, double wrist2, double wrist3){
+        name = newName;
         shoulderPanJoint = shoulderPan;
         shoulderLiftJoint = shoulderLift;
         elbowJoint = elbow;
