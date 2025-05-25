@@ -21,7 +21,7 @@ class staticPositions  {
         std::map<std::string, double> coordinatesMap;
 
 
-    staticPositions(std::string, double, double, double, double,double,double);
+    staticPositions(const std::string&, double, double, double, double,double,double);
 
     void changeValues (const std::string& newName, double shoulderPan, double shoulderLift, double elbow, double wrist1, double wrist2, double wrist3){
         name = newName;
