@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(object_reference_msg REQUIRED)
 
 add_executable(robot_moveit src/robot_moveit.cpp)
 target_include_directories(robot_moveit PUBLIC
@@ -19,6 +20,7 @@ ament_target_dependencies(
   robot_moveit
   "moveit_ros_planning_interface"
   "rclcpp"
+  "object_reference_msg"
 )
 
 install(TARGETS robot_moveit
