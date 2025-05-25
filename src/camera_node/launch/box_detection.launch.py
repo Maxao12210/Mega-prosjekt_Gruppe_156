@@ -11,9 +11,9 @@ def generate_launch_description():
         name='v4l2_camera',
         parameters=[{
             'video_device': '/dev/video4',
-            'image_size': [640, 480],
+            'image_size': [1280, 720],
             'output_encoding': 'bgr8',
-            'fps': 10,
+            'fps': 24,
         }],
     ),
 
