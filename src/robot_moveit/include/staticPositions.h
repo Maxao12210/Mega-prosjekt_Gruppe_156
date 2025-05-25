@@ -11,17 +11,26 @@
 
 class staticPositions  {
     public:
-        std::string name = "Static position";
-        double shoulderPanJoint = 0.0;
-        double shoulderLiftJoint = 0.0;
-        double elbowJoint = 0.0;
-        double wrist1Joint = 0.0;
-        double wrist2Joint = 0.0;
-        double wrist3Joint = 0.0;
+        std::string name;
+        double shoulderPanJoint;
+        double shoulderLiftJoint;
+        double elbowJoint;
+        double wrist1Joint;
+        double wrist2Joint;
+        double wrist3Joint;
         std::map<std::string, double> coordinatesMap;
 
 
-    staticPositions(const std::string&, double, double, double, double,double,double);
+    staticPositions(std::string nam, double sPan = 0.000, double sLift = 0.000, double elb = 0.000, double w1 = 0.000,double w2 = 0.000,double w3 = 0.000)
+    :name(std::move(nam)), shoulderPanJoint(sPan), shoulderLiftJoint(sLift), elbowJoint(elb), wrist1Joint(w1), wrist2Joint(w2), wrist3Joint(w3)
+    {
+        coordinatesMap["shoulder_pan_joint"] = shoulderPanJoint;
+        coordinatesMap["shoulder_lift_joint"] = shoulderLiftJoint;
+        coordinatesMap["elbow_joint"] = elbowJoint;
+        coordinatesMap["wrist_1_joint"] = wrist1Joint;
+        coordinatesMap["wrist_2_joint"] = wrist2Joint;
+        coordinatesMap["wrist_3_joint"] = wrist3Joint;
+    }
 
     void changeValues (const std::string& newName, double shoulderPan, double shoulderLift, double elbow, double wrist1, double wrist2, double wrist3){
         name = newName;
@@ -32,17 +41,17 @@ class staticPositions  {
         wrist2Joint = wrist2;
         wrist3Joint = wrist3;
 
-        std::cout<<"The new valus are: \n" << shoulderPanJoint << "\n" << shoulderLiftJoint << "\n" << elbowJoint << "\n" << wrist1Joint << "\n" << wrist2Joint << "\n" << wrist3Joint << std::endl;
-    }
-
-    std::map<std::string, double> getCoordinatesMap () {
-        std::map<std::string, double> coordinatesMap;
         coordinatesMap["shoulder_pan_joint"] = shoulderPanJoint;
         coordinatesMap["shoulder_lift_joint"] = shoulderLiftJoint;
         coordinatesMap["elbow_joint"] = elbowJoint;
         coordinatesMap["wrist_1_joint"] = wrist1Joint;
         coordinatesMap["wrist_2_joint"] = wrist2Joint;
         coordinatesMap["wrist_3_joint"] = wrist3Joint;
+
+        std::cout<<"The new valus are: \n" << shoulderPanJoint << "\n" << shoulderLiftJoint << "\n" << elbowJoint << "\n" << wrist1Joint << "\n" << wrist2Joint << "\n" << wrist3Joint << std::endl;
+    }
+
+    [[nodiscard]] std::map<std::string, double> getCoordinatesMap () const {
         return coordinatesMap;
     }
 
