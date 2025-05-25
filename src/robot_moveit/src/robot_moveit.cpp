@@ -29,14 +29,18 @@ bool plan_and_execute(
   }
 }
 
+// Initiate global ref_pos values for the sevice
 double target_x, target_y;
+bool response_check;
 
-void add(const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request> request,
-          std::shared_ptr<object_reference_msg::srv::ObjectReference::Response>       response)
+// Get tcp pos values from get_tcp_pos service
+void get_tcp_pos(const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request> request,
+                 std::shared_ptr<object_reference_msg::srv::ObjectReference::Response> response)
 {
   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\nx: %f" " y: %f",
                 request->x, request->y);
-  if (0.1 <= request->x && request->x <= 1.00 && -0.1 <= request->y  && request->y <= 0.5) {
+  if (0.1 <= request->x && request->x <= 1.00 && 0.1 <= request->y  && request->y <= 0.5) // Usikre verdier
+  {
     target_x = request->x;
     target_y = request->y;
     response->success = true;
@@ -44,7 +48,7 @@ void add(const std::shared_ptr<object_reference_msg::srv::ObjectReference::Reque
     response->success = false;
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request failed!");
   }
-
+  response_check = response->success;
 }
 
 int main(int argc, char * argv[])
@@ -60,18 +64,46 @@ int main(int argc, char * argv[])
   using moveit::planning_interface::MoveGroupInterface;
   MoveGroupInterface move_group(node, "ur_manipulator");
 
+  // Start get_tcp_pos service
   rclcpp::Service<object_reference_msg::srv::ObjectReference>::SharedPtr service =
-   node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &add);
+   node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &get_tcp_pos);
 
-
+  // Move robot to home pos
   plan_and_execute(move_group, coordinatesForHome, logger, "home position");
 
-
+  // MOve robot to first ref point
   plan_and_execute(move_group, ref_joint_values, logger, "reference position");
 
+  // Sjekke om service responsen har fått gyldige verdier, og setter ny posisjon til robot og planer
+  // NB! Forikre at vardian e bra før execute, har ikke testet selv
+  if (response_check == true) {
+    // Set a target Pose
+    auto const target_pose = []{
+      geometry_msgs::msg::Pose msg;
+      msg.orientation.w = 1.0;
+      msg.position.x = target_x;
+      msg.position.y = target_y;
+      msg.position.z = 0.5;
+      return msg;
+    }();
+    move_group.setPoseTarget(target_pose);
 
+    // Create a plan to that target pose
+    auto const [success, plan] = [&move_group]{
+      moveit::planning_interface::MoveGroupInterface::Plan msg;
+      auto const ok = static_cast<bool>(move_group.plan(msg));
+      return std::make_pair(ok, msg);
+    }();
 
-  rclcpp::spin(node);
+    // Execute the plan, uncoment to execute
+    //if(success) {
+      //move_group.execute(plan);
+    //} else {
+      //RCLCPP_ERROR(logger, "Planning failed!");
+    //}
+  }
+
+  rclcpp::spin(node); // Ensure the node stays alive for get_tcp_pos service to work
   rclcpp::shutdown();
   return 0;
 }
