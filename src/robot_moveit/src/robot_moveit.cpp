@@ -1,7 +1,7 @@
 #include <memory>
 
-#include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char * argv[])
 {
@@ -22,7 +22,7 @@ int main(int argc, char * argv[])
   // Set a target Pose
   auto const target_pose = []{
     geometry_msgs::msg::Pose msg;
-    msg.orientation.x = 0.709;
+    msg.orientation. = 0.709;
     msg.orientation.y = -0.705;
     msg.orientation.z = -0.016;
     msg.orientation.w = 0.008;
@@ -44,11 +44,11 @@ int main(int argc, char * argv[])
   }();
 
   // Execute the plan
-  if(success) {
-    move_group_interface.execute(plan);
-  } else {
-    RCLCPP_ERROR(logger, "Planning failed!");
-  }
+  //if(success) {
+    //move_group_interface.execute(plan);
+  //} else {
+    //RCLCPP_ERROR(logger, "Planning failed!");
+  //}
 
   // Shutdown ROS
   rclcpp::shutdown();
