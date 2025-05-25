@@ -1,9 +1,10 @@
 #include <memory>
-#include <map>
-#include <string>
+#include "Static_pos.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+// Source link: https://moveit.picknik.ai/main/doc/tutorials/visualizing_in_rviz/visualizing_in_rviz.html
 
 // Helper function to plan and execute joint movements
 bool plan_and_execute(
@@ -39,30 +40,15 @@ int main(int argc, char * argv[])
   using moveit::planning_interface::MoveGroupInterface;
   MoveGroupInterface move_group(node, "ur_manipulator");
 
-  // Define "home" joint positions
-  std::map<std::string, double> home_joint_values = {
-    {"shoulder_pan_joint",    0.000},
-    {"shoulder_lift_joint",  -1.571},
-    {"elbow_joint",          -0.000},
-    {"wrist_1_joint",         0.000},
-    {"wrist_2_joint",         0.000},
-    {"wrist_3_joint",         0.000}
-  };
+
 
   plan_and_execute(move_group, home_joint_values, logger, "home position");
 
-  // Define reference joint positions
-  std::map<std::string, double> ref_joint_values = {
-    {"shoulder_pan_joint",    0.005},
-    {"shoulder_lift_joint",  -1.060},
-    {"elbow_joint",           0.3875},
-    {"wrist_1_joint",        -0.930},
-    {"wrist_2_joint",        -1.474},
-    {"wrist_3_joint",        -0.0005}
-  };
+
 
   plan_and_execute(move_group, ref_joint_values, logger, "reference position");
 
   rclcpp::shutdown();
   return 0;
 }
+
