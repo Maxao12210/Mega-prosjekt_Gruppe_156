@@ -5,6 +5,7 @@
 #ifndef STATICPOSITIONS_H
 #define STATICPOSITIONS_H
 #include <iostream>
+#include <map>
 
 
 
@@ -17,8 +18,10 @@ class staticPositions  {
         double wrist1Joint = 0.0;
         double wrist2Joint = 0.0;
         double wrist3Joint = 0.0;
+        std::map<std::string, double> coordinatesMap;
 
-    staticPositions(std::string, double, double, double, double, double,double);
+
+    staticPositions(std::string, double, double, double, double,double,double);
 
     void changeValues (const std::string& newName, double shoulderPan, double shoulderLift, double elbow, double wrist1, double wrist2, double wrist3){
         name = newName;
@@ -31,6 +34,18 @@ class staticPositions  {
 
         std::cout<<"The new valus are: \n" << shoulderPanJoint << "\n" << shoulderLiftJoint << "\n" << elbowJoint << "\n" << wrist1Joint << "\n" << wrist2Joint << "\n" << wrist3Joint << std::endl;
     }
+
+    std::map<std::string, double> getCoordinatesMap () {
+        std::map<std::string, double> coordinatesMap;
+        coordinatesMap["shoulder_pan_joint"] = shoulderPanJoint;
+        coordinatesMap["shoulder_lift_joint"] = shoulderLiftJoint;
+        coordinatesMap["elbow_joint"] = elbowJoint;
+        coordinatesMap["wrist_1_joint"] = wrist1Joint;
+        coordinatesMap["wrist_2_joint"] = wrist2Joint;
+        coordinatesMap["wrist_3_joint"] = wrist3Joint;
+        return coordinatesMap;
+    }
+
     ~staticPositions()=default;
 };
 
