@@ -34,6 +34,7 @@ double target_x, target_y;
 bool response_check;
 
 // Get tcp pos values from get_tcp_pos service
+// Kan bruke rqt service call for å endre verdier på /get_tcp_pos
 void get_tcp_pos(const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request> request,
                  std::shared_ptr<object_reference_msg::srv::ObjectReference::Response> response)
 {
