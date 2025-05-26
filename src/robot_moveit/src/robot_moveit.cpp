@@ -1,15 +1,15 @@
 #include <memory>
 #include "staticPositions.cpp"
-#include "Static_pos.hpp"
+#include "referencePosition.cpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <object_reference_msg/srv/object_reference.hpp>
+
 
 // Source link: https://moveit.picknik.ai/main/doc/tutorials/visualizing_in_rviz/visualizing_in_rviz.html
 
 // Helper function to plan and execute joint movements
-bool plan_and_execute(
+bool plan_and_execute_joint(
   moveit::planning_interface::MoveGroupInterface & move_group,
   const std::map<std::string, double> & joint_targets,
   const rclcpp::Logger & logger,
@@ -29,26 +29,25 @@ bool plan_and_execute(
   }
 }
 
-// Initiate global ref_pos values for the sevice
-double target_x, target_y;
-bool response_check;
-
-// Get tcp pos values from get_tcp_pos service
-void get_tcp_pos(const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request> request,
-                 std::shared_ptr<object_reference_msg::srv::ObjectReference::Response> response)
+// Helper function to plan and execute tcp position
+bool plan_and_execute_tcp(
+  moveit::planning_interface::MoveGroupInterface & move_group,
+  const geometry_msgs::msg::Pose & target_pos,
+  const rclcpp::Logger & logger,
+  const std::string & description)
 {
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\nx: %f" " y: %f",
-                request->x, request->y);
-  if (0.1 <= request->x && request->x <= 1.00 && 0.1 <= request->y  && request->y <= 0.5) // Usikre verdier
-  {
-    target_x = request->x;
-    target_y = request->y;
-    response->success = true;
+  move_group.setPoseTarget(target_pos);
+
+  moveit::planning_interface::MoveGroupInterface::Plan plan;
+  bool success = static_cast<bool>(move_group.plan(plan));
+  if (success) {
+    RCLCPP_INFO(logger, "Planning to %s successful, executing...", description.c_str());
+    move_group.execute(plan);
+    return true;
   } else {
-    response->success = false;
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request failed!");
+    RCLCPP_ERROR(logger, "Planning to %s failed!", description.c_str());
+    return false;
   }
-  response_check = response->success;
 }
 
 int main(int argc, char * argv[])
@@ -69,10 +68,10 @@ int main(int argc, char * argv[])
    node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &get_tcp_pos);
 
   // Move robot to home pos
-  plan_and_execute(move_group, coordinatesForHome, logger, "home position");
+  plan_and_execute_joint(move_group, coordinatesForHome, logger, "home position");
 
   // MOve robot to first ref point
-  plan_and_execute(move_group, ref_joint_values, logger, "reference position");
+  plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
 
   // Spin/wait for callback to set the flag
   while (!response_check) {
@@ -81,36 +80,15 @@ int main(int argc, char * argv[])
     std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // avoid busy loop
   }
 
-  // Sjekke om service responsen har fått gyldige verdier, og setter ny posisjon til robot og planer
-  // NB! Forikre at vardian e bra før execute, har ikke testet selv
+  // Move above Object positions
+  plan_and_execute_tcp(move_group, firstPose, logger, "target position");
 
-  // Set a target Pose
-  auto const target_pose = []{
-    geometry_msgs::msg::Pose msg;
-    msg.orientation.w = 1.0;
-    msg.position.x = target_x;
-    msg.position.y = target_y;
-    msg.position.z = 0.5;
-    return msg;
-  }();
-  move_group.setPoseTarget(target_pose);
+  plan_and_execute_tcp(move_group, secondPose, logger, "target position");
 
-  // Create a plan to that target pose
-  auto const [success, plan] = [&move_group]{
-    moveit::planning_interface::MoveGroupInterface::Plan msg;
-    auto const ok = static_cast<bool>(move_group.plan(msg));
-    return std::make_pair(ok, msg);
-  }();
-
-  // Execute the plan, uncoment to execute
-  if(success) {
-    move_group.execute(plan);
-  } else {
-    RCLCPP_ERROR(logger, "Planning failed!");
-  }
+  plan_and_execute_tcp(move_group, thirdPose, logger, "target position");
 
   // MOve robot to first ref point
-  plan_and_execute(move_group, ref_joint_values, logger, "reference position");
+  plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
 
   rclcpp::shutdown();
   return 0;

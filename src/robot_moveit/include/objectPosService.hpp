@@ -10,6 +10,4 @@
 #include <memory>
 
 
-
-
 #endif //OBJECTPOSSERVICE_HPP
