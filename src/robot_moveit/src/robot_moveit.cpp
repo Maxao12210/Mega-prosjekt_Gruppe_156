@@ -74,33 +74,47 @@ int main(int argc, char * argv[])
   // MOve robot to first ref point
   plan_and_execute(move_group, ref_joint_values, logger, "reference position");
 
+  bool running = true;
+
   // Sjekke om service responsen har fått gyldige verdier, og setter ny posisjon til robot og planer
   // NB! Forikre at vardian e bra før execute, har ikke testet selv
-  if (response_check == true) {
-    // Set a target Pose
-    auto const target_pose = []{
-      geometry_msgs::msg::Pose msg;
-      msg.orientation.w = 1.0;
-      msg.position.x = target_x;
-      msg.position.y = target_y;
-      msg.position.z = 0.5;
-      return msg;
-    }();
-    move_group.setPoseTarget(target_pose);
+  while(running) {
 
-    // Create a plan to that target pose
-    auto const [success, plan] = [&move_group]{
-      moveit::planning_interface::MoveGroupInterface::Plan msg;
-      auto const ok = static_cast<bool>(move_group.plan(msg));
-      return std::make_pair(ok, msg);
-    }();
+    if (response_check) {
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "New planning accepted");
+      // Set a target Pose
+      auto const target_pose = []{
+        geometry_msgs::msg::Pose msg;
+        msg.orientation.w = 1.0;
+        msg.position.x = target_x;
+        msg.position.y = target_y;
+        msg.position.z = 0.5;
+        return msg;
+      }();
+      move_group.setPoseTarget(target_pose);
 
-    // Execute the plan, uncoment to execute
-    //if(success) {
+      // Create a plan to that target pose
+      auto const [success, plan] = [&move_group]{
+        moveit::planning_interface::MoveGroupInterface::Plan msg;
+        auto const ok = static_cast<bool>(move_group.plan(msg));
+        return std::make_pair(ok, msg);
+      }();
+
+      // Execute the plan, uncoment to execute
+      //if(success) {
       //move_group.execute(plan);
-    //} else {
+      //} else {
       //RCLCPP_ERROR(logger, "Planning failed!");
-    //}
+      //}
+      std::string terminal_response;
+      std::cin >> terminal_response;
+      if (terminal_response == "[INFO] [1748276711.937318770] [moveit_3700910046.moveit.ros.move_group_interface]: Execute request success!") {
+        running = false;
+        response_check = false;
+      }
+    }
+
+
   }
 
   rclcpp::spin(node); // Ensure the node stays alive for get_tcp_pos service to work
