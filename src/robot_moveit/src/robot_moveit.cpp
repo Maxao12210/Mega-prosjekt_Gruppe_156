@@ -83,14 +83,14 @@ int main(int argc, char * argv[])
     std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // avoid busy loop
   }
 
-referencePosition firstPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x1, target_y1, position_z);
-geometry_msgs::msg::Pose firstPose = firstPosition.getPose();
+  referencePosition firstPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x1, target_y1, position_z);
+  geometry_msgs::msg::Pose firstPose = firstPosition.getPose();
 
-referencePosition secondPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x2, target_y2, position_z);
-geometry_msgs::msg::Pose secondPose = secondPosition.getPose();
+  referencePosition secondPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x2, target_y2, position_z);
+  geometry_msgs::msg::Pose secondPose = secondPosition.getPose();
 
-referencePosition thirdPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x3, target_y3, position_z);
-geometry_msgs::msg::Pose thirdPose = thirdPosition.getPose();
+  referencePosition thirdPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x3, target_y3, position_z);
+  geometry_msgs::msg::Pose thirdPose = thirdPosition.getPose();
 
   // Move above Object positions
   plan_and_execute.plan_and_execute_tcp(move_group, firstPose, logger, "target position1");
