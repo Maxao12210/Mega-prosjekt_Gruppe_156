@@ -10,7 +10,7 @@ def generate_launch_description():
         executable='v4l2_camera_node',
         name='v4l2_camera',
         parameters=[{
-            'video_device': '/dev/video4',
+            'video_device': '/dev/video0',
             'image_size': [1280, 720],
             'output_encoding': 'bgr8',
             'fps': 24,
@@ -19,7 +19,7 @@ def generate_launch_description():
 
     # 2) Box detection node (color‐box finder)
     Node(
-        package='cube_pointer_robot',
+        package='camera_node',
         executable='box_detection_node',
         name='box_detection_node',
         parameters=[{
@@ -28,7 +28,7 @@ def generate_launch_description():
     ),
 
     Node(
-        package='cube_pointer_robot',
+        package='camera_node',
         executable='coordinator_test_node',
         name='coordinator_test_node',
 
