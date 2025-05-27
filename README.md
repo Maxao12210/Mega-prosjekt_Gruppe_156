@@ -86,3 +86,11 @@ Verifisere kalibrering
 ros2 topic echo /camera/camera_info --once
 ```
 Du skal nå se de kalibrerte K, D, R og P-matrisene i meldingen.
+
+For å kjøre robot_moveit:
+
+Externet trenger moveit_move_group_interface
+kjøre node med ros2 run robot_moveit robot_moveit
+
+
+
