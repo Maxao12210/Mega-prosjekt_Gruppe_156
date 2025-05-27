@@ -15,13 +15,18 @@ PathPlanning plan_and_execute;
 staticPositions homePosition("Home position", 0.000,-1.571,-0.000,0.000,0.000,0.000);
 std::map<std::string, double> coordinatesForHome = homePosition.getCoordinatesMap();
 
-staticPositions ref1("Position nr.1", 0.005, -1.060, 0.3875, -0.930, -1.474,-0.0005);
+staticPositions ref1("Position nr.1", 0.005, -1.060, 0.3875, -0.930, -1.57,-0.0005);
 std::map<std::string, double> coordinatesForRef1 = ref1.getCoordinatesMap();
 
 // Not accurate values
-double orientation_x = 0.7, orientation_y = 0.7, orientation_z = 0.7, orientation_w = 0.7;
+double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, orientation_w = -0.045;
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
-double position_z = 0.3;
+double position_z = 0.17;
+
+double min_x = 0.25;
+double min_y = -0.13;
+double max_x = 0.5;
+double max_y = 0.38;
 
 bool response_check = false;
 
@@ -32,12 +37,12 @@ void get_tcp_pos(const std::shared_ptr<object_reference_msg::srv::ObjectReferenc
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\nx1: %f" " y1: %f" "x2: %f" "y2: %f" "x3: %f" "y3: %f",
                   request->x1, request->y1, request->x2, request->y2, request->x3, request->y3);
 
-    if ((0.2 <= request->x1 && request->x1 <= 0.5) &&
-        (0.2 <= request->x2 && request->x2 <= 0.5) &&
-        (0.2 <= request->x3 && request->x3 <= 0.5) &&
-        (0.1 <= request->y1 && request->y1 <= 0.4) &&
-        (0.1 <= request->y2 && request->y2 <= 0.4) &&
-        (0.1 <= request->y3 && request->y3 <= 0.4)) // Usikre verdier
+    if ((min_x <= request->x1 && request->x1 <= max_x) &&
+        (min_x <= request->x2 && request->x2 <= max_x) &&
+        (min_x <= request->x3 && request->x3 <= max_x) &&
+        (min_y <= request->y1 && request->y1 <= max_y) &&
+        (min_y <= request->y2 && request->y2 <= max_y) &&
+        (min_y <= request->y3 && request->y3 <= max_y)) // Usikre verdier
     {
         target_x1 = request->x1;
         target_y1 = request->y1;
@@ -80,8 +85,10 @@ int main(int argc, char * argv[])
   while (!response_check) {
     rclcpp::spin_some(node);
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // avoid busy loop
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // avoid busy loop
   }
+
+    response_check = false;
 
   referencePosition firstPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x1, target_y1, position_z);
   geometry_msgs::msg::Pose firstPose = firstPosition.getPose();
