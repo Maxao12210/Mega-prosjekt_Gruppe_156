@@ -18,13 +18,13 @@ bool create_camera_object(
         camera_primitives.type = camera_primitives.BOX;
         camera_primitives.dimensions.resize(3);
         camera_primitives.dimensions[camera_primitives.BOX_X] = 0.07;
-        camera_primitives.dimensions[camera_primitives.BOX_Y] = 0.12;
+        camera_primitives.dimensions[camera_primitives.BOX_Y] = 0.1;
         camera_primitives.dimensions[camera_primitives.BOX_Z] = 0.1;
 
         camera_object.header.frame_id = move_group.getEndEffectorLink();
         geometry_msgs::msg::Pose grab_pose;
         grab_pose.orientation.w = 1.0;
-        grab_pose.position.y = -0.06;
+        grab_pose.position.y = -0.04;
         grab_pose.position.z = 0.05;
 
         camera_object.primitives.push_back(camera_primitives);
@@ -64,7 +64,7 @@ bool create_table_object(
     table_pose.orientation.w = 1.0;
     table_pose.position.x = 0.5;
     table_pose.position.y = 0.0;
-    table_pose.position.z = -0.15;
+    table_pose.position.z = -0.05;
 
     table_object.primitives.push_back(table_primitive);
     table_object.primitive_poses.push_back(table_pose);

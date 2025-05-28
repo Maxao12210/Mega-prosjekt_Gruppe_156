@@ -10,9 +10,9 @@ class TestCoordinator(Node):
         super().__init__('test_coordinator')
 
         # Known TCP tool position in world frame (meters)
-        self.tcp_x = 0.34344
-        self.tcp_y = 0.100
-        self.tcp_z = 0.420  # not used here, but available
+        self.tcp_x = 0.37
+        self.tcp_y = 0.110
+        self.tcp_z = 0.418  # not used here, but available
 
         self.cam_off_x = 0.07
         self.cam_off_y = 0.10

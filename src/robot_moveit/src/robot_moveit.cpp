@@ -25,7 +25,7 @@ double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, or
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
 double position_z = 0.25;
 
-double min_x = 0.20;
+double min_x = 0.15;
 double min_y = -0.13;
 double max_x = 0.6;
 double max_y = 0.45;
@@ -92,8 +92,6 @@ void get_tcp_pos(
   response_check = true;
 }
 
-
-
 int main(int argc, char * argv[])
 {
   // Initialize ROS and create the node
@@ -113,10 +111,11 @@ int main(int argc, char * argv[])
 
   create_table_object(move_group, planning_scene_interface, logger);
 
-
   // Start get_tcp_pos service
   rclcpp::Service<object_reference_msg::srv::ObjectReference>::SharedPtr service =
    node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &get_tcp_pos);
+
+  move_group.setStartState(*move_group.getCurrentState());
 
   RCLCPP_INFO(logger, "About to move to home position…");
 

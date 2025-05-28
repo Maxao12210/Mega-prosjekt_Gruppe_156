@@ -89,11 +89,11 @@ class PathPlanning {
         if (success) {
             RCLCPP_INFO(logger, "Planning to %s successful, executing...", description.c_str());
             move_group.execute(plan);
-            move_group.clearPathConstraints();
+            //move_group.clearPathConstraints();
             return true;
         } else {
             RCLCPP_ERROR(logger, "Planning to %s failed!", description.c_str());
-            move_group.clearPathConstraints();
+            //move_group.clearPathConstraints();
             return false;
         }
     }
