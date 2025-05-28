@@ -6,6 +6,7 @@
 #include  "CameraBracket.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
+#include <moveit/planning_scene_interface/planning_scene_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include "object_reference_msg/srv/object_reference.hpp"
 
@@ -105,14 +106,11 @@ int main(int argc, char * argv[])
   // Create the MoveIt MoveGroup Interface
   using moveit::planning_interface::MoveGroupInterface;
   MoveGroupInterface move_group(node, "ur_manipulator");
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   // Add camera collision object
   moveit_msgs::msg::CollisionObject camera_object;
-  camera_object.header.frame_id = move_group.getEndEffectorLink();
-
-  geometry_msgs::msg::Pose grab_pose;
-  grab_pose.orientation.w = 1.0;
-  grab_pose.position.z = 0.6;
+  camera_object.id = "camera";
 
   shape_msgs::msg::SolidPrimitive camera_primitives;
   camera_primitives.type = camera_primitives.BOX;
@@ -121,19 +119,20 @@ int main(int argc, char * argv[])
   camera_primitives.dimensions[camera_primitives.BOX_Y] = 0.07;
   camera_primitives.dimensions[camera_primitives.BOX_Z] = 0.1;
 
-  geometry_msgs::msg::Pose box_pose;
-  box_pose.orientation.w = 1.0;
-  box_pose.position.x = 0.48;
-  box_pose.position.y = 0.0;
-  box_pose.position.z = 0.25;
+  camera_object.header.frame_id = move_group.getEndEffectorLink();
+  geometry_msgs::msg::Pose grab_pose;
+  grab_pose.orientation.w = 1.0;
+  grab_pose.position.z = 0.6;
 
   camera_object.primitives.push_back(camera_primitives);
   camera_object.primitive_poses.push_back(grab_pose);
   camera_object.operation = camera_object.ADD;
+  planning_scene_interface.applyCollisionObject(camera_object);
 
+  RCLCPP_INFO(logger, "Attach the object to the robot");
   std::vector<std::string> touch_links;
   touch_links.push_back("tool0");
-  move_group.attachObject(camera_object.id, "wrist_1_link", touch_links);
+  move_group.attachObject(camera_object.id, "wrist_3_link", touch_links);
 
 
   std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
