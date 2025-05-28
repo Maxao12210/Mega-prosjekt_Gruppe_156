@@ -13,9 +13,10 @@ def generate_launch_description():
             'video_device': '/dev/video0',
             'image_size': [1280, 720],
             'output_encoding': 'bgr8',
-            'fps': 24,
+            'fps': 15,
         }],
     ),
+
 
     # 2) Box detection node (color‐box finder)
     Node(
@@ -26,6 +27,17 @@ def generate_launch_description():
             'camera_topic': '/image_raw'
         }],
     ),
+
+    # 2) Box detection node (color‐box finder)
+    Node(
+        package='camera_node',
+        executable='camera_debug_node',
+        name='camera_debug_node',
+        parameters=[{
+            'camera_topic': '/image_raw'
+        }],
+    ),
+
 
     Node(
         package='camera_node',

@@ -13,5 +13,3 @@
 1. Externet trenger moveit_move_group_interface
 2. kjøre node med ros2 run robot_moveit robot_moveit
 
-
-
