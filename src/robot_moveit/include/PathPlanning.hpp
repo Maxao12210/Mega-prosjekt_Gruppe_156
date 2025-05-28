@@ -76,7 +76,7 @@ class PathPlanning {
 
         moveit_msgs::msg::Constraints path_constraints;
         path_constraints.joint_constraints.push_back(jc_shoulder_lift);
-        path_constraints.joint_constraints.push_back(jc_wrist_2);
+        path_constraints.joinft_constraints.push_back(jc_wrist_2);
         path_constraints.joint_constraints.push_back(jc_shoulder_pan);
 
         // Apply to MoveGroupInterface
