@@ -3,6 +3,7 @@
 #include "staticPositions.h"
 #include "referencePosition.hpp"
 #include "PathPlanning.hpp"
+#include  "CameraBracket.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -11,6 +12,8 @@
 // Source link: https://moveit.picknik.ai/main/doc/tutorials/visualizing_in_rviz/visualizing_in_rviz.html
 
 PathPlanning plan_and_execute;
+
+
 
 staticPositions homePosition("Home position", 0.000,-1.571,-0.000,0.000,0.000,0.000);
 std::map<std::string, double> coordinatesForHome = homePosition.getCoordinatesMap();
@@ -89,6 +92,7 @@ void get_tcp_pos(
 }
 
 
+
 int main(int argc, char * argv[])
 {
   // Initialize ROS and create the node
@@ -101,6 +105,39 @@ int main(int argc, char * argv[])
   // Create the MoveIt MoveGroup Interface
   using moveit::planning_interface::MoveGroupInterface;
   MoveGroupInterface move_group(node, "ur_manipulator");
+
+  // Add camera collision object
+  moveit_msgs::msg::CollisionObject camera_object;
+  camera_object.header.frame_id = move_group.getEndEffectorLink();
+
+  geometry_msgs::msg::Pose grab_pose;
+  grab_pose.orientation.w = 1.0;
+  grab_pose.position.z = 0.6;
+
+  shape_msgs::msg::SolidPrimitive camera_primitives;
+  camera_primitives.type = camera_primitives.BOX;
+  camera_primitives.dimensions.resize(3);
+  camera_primitives.dimensions[camera_primitives.BOX_X] = 0.08;
+  camera_primitives.dimensions[camera_primitives.BOX_Y] = 0.07;
+  camera_primitives.dimensions[camera_primitives.BOX_Z] = 0.1;
+
+  geometry_msgs::msg::Pose box_pose;
+  box_pose.orientation.w = 1.0;
+  box_pose.position.x = 0.48;
+  box_pose.position.y = 0.0;
+  box_pose.position.z = 0.25;
+
+  camera_object.primitives.push_back(camera_primitives);
+  camera_object.primitive_poses.push_back(grab_pose);
+  camera_object.operation = camera_object.ADD;
+
+  std::vector<std::string> touch_links;
+  touch_links.push_back("tool0");
+  move_group.attachObject(camera_object.id, "wrist_1_link", touch_links);
+
+
+  std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
+  collision_objects.push_back(camera_object);
 
   // Start get_tcp_pos service
   rclcpp::Service<object_reference_msg::srv::ObjectReference>::SharedPtr service =
