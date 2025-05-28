@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'cube_pointer_robot'
+package_name = 'camera_node'
 
 setup(
     name=package_name,
@@ -14,7 +14,7 @@ setup(
     ]),
     data_files=[
         ('share/ament_index/resource_index/packages',
-            [os.path.join('resource', package_name)]),
+            [os.path.join('../camera_node/resource', package_name)]),
         ('share/' + package_name, ['package.xml']),
         # Include launch files
         ('share/' + package_name + '/launch', glob('bringup/launch/*.py')),
