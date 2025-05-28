@@ -42,7 +42,6 @@ class PathPlanning {
         } else {
             RCLCPP_ERROR(logger, "Planning to %s failed!", description.c_str());
             //move_group.clearPathConstraints();
-            rclcpp::shutdown();
             return false;
         }
     }
@@ -95,7 +94,6 @@ class PathPlanning {
         } else {
             RCLCPP_ERROR(logger, "Planning to %s failed!", description.c_str());
             move_group.clearPathConstraints();
-            rclcpp::shutdown();
             return false;
         }
     }

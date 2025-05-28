@@ -6,15 +6,13 @@
 #include  "CameraBracket.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
-#include <moveit/planning_scene_interface/planning_scene_interface.hpp>
+//#include <moveit/planning_scene_interface/planning_scene_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include "object_reference_msg/srv/object_reference.hpp"
 
 // Source link: https://moveit.picknik.ai/main/doc/tutorials/visualizing_in_rviz/visualizing_in_rviz.html
 
 PathPlanning plan_and_execute;
-
-
 
 staticPositions homePosition("Home position", 0.000,-1.571,-0.000,0.000,0.000,0.000);
 std::map<std::string, double> coordinatesForHome = homePosition.getCoordinatesMap();
@@ -25,12 +23,12 @@ std::map<std::string, double> coordinatesForRef1 = ref1.getCoordinatesMap();
 // Not accurate values
 double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, orientation_w = -0.045;
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
-double position_z = 0.30;
+double position_z = 0.25;
 
-double min_x = 0.25;
+double min_x = 0.20;
 double min_y = -0.13;
-double max_x = 0.5;
-double max_y = 0.38;
+double max_x = 0.6;
+double max_y = 0.45;
 
 bool response_check = false;
 
@@ -89,6 +87,8 @@ void get_tcp_pos(
     target_x3, target_y3);
 
   response->success = true;
+
+
   response_check = true;
 }
 
@@ -109,34 +109,10 @@ int main(int argc, char * argv[])
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   // Add camera collision object
-  moveit_msgs::msg::CollisionObject camera_object;
-  camera_object.id = "camera";
+  create_camera_object(move_group, planning_scene_interface, logger);
 
-  shape_msgs::msg::SolidPrimitive camera_primitives;
-  camera_primitives.type = camera_primitives.BOX;
-  camera_primitives.dimensions.resize(3);
-  camera_primitives.dimensions[camera_primitives.BOX_X] = 0.08;
-  camera_primitives.dimensions[camera_primitives.BOX_Y] = 0.07;
-  camera_primitives.dimensions[camera_primitives.BOX_Z] = 0.1;
+  create_table_object(move_group, planning_scene_interface, logger);
 
-  camera_object.header.frame_id = move_group.getEndEffectorLink();
-  geometry_msgs::msg::Pose grab_pose;
-  grab_pose.orientation.w = 1.0;
-  grab_pose.position.z = 0.05;
-
-  camera_object.primitives.push_back(camera_primitives);
-  camera_object.primitive_poses.push_back(grab_pose);
-  camera_object.operation = camera_object.ADD;
-  planning_scene_interface.applyCollisionObject(camera_object);
-
-  RCLCPP_INFO(logger, "Attach the object to the robot");
-  std::vector<std::string> touch_links;
-  touch_links.push_back("tool0");
-  move_group.attachObject(camera_object.id, "wrist_3_link", touch_links);
-
-
-  std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
-  collision_objects.push_back(camera_object);
 
   // Start get_tcp_pos service
   rclcpp::Service<object_reference_msg::srv::ObjectReference>::SharedPtr service =
