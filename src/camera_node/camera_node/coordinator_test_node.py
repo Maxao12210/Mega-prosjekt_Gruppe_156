@@ -10,9 +10,12 @@ class TestCoordinator(Node):
         super().__init__('test_coordinator')
 
         # Known TCP tool position in world frame (meters)
-        self.tcp_x = 0.373
-        self.tcp_y = 0.114
-        self.tcp_z = 0.418  # not used here, but available
+        self.tcp_x = 0.34344
+        self.tcp_y = 0.100
+        self.tcp_z = 0.420  # not used here, but available
+
+        self.cam_off_x = 0.07
+        self.cam_off_y = 0.10
 
         # Camera resolution and calibration
         self.img_w = 1280
@@ -29,6 +32,10 @@ class TestCoordinator(Node):
         self.create_subscription(
             String, '/box_coordinates',
             self.box_callback, 10)
+
+        # publisher for global coords
+        self.coords_pub = self.create_publisher(
+            String, '/tcp_global_coords', 10)
 
         # set up service client
         self.cli = self.create_client(ObjectReference, 'get_tcp_pos')
@@ -53,11 +60,19 @@ class TestCoordinator(Node):
         if None not in (self.red_px, self.blue_px, self.green_px):
             self.call_service_and_exit()
 
+
     def pixel_to_world(self, px, py):
-        # center the pixel origin, then scale
+        # 1) project pixel offset into meters (centered at optical axis)
         dx = (px - self.img_w/2) * self.mpp_x
         dy = (py - self.img_h/2) * self.mpp_y
-        return dx + self.tcp_x, dy + self.tcp_y
+
+        # 2) camera origin in world = TCP + camera offset
+        cam_x = self.tcp_x + self.cam_off_x
+        cam_y = self.tcp_y    # assume no lateral Y offset
+        # cam_z = self.tcp_z + self.cam_off_z  # if you later need Z
+
+        # 3) world coords = camera_origin + projection
+        return cam_x + dx, cam_y + dy
 
     def call_service_and_exit(self):
         # compute each global (x,y)
@@ -65,13 +80,23 @@ class TestCoordinator(Node):
         bx, by = self.pixel_to_world(*self.blue_px)
         gx, gy = self.pixel_to_world(*self.green_px)
 
+        # publish the same global coords as a string
+        coords_msg = String()
+        coords_msg.data = (
+            f"RED:({rx:.3f},{ry:.3f}); "
+            f"GREEN:({gx:.3f},{gy:.3f}); "
+            f"BLUE:({bx:.3f},{by:.3f})"
+        )
+        self.coords_pub.publish(coords_msg)
+        self.get_logger().info(f"Published global coords → {coords_msg.data}")
+
+        # now build and send the service request
         req = ObjectReference.Request()
         req.x1, req.y1 = rx, ry
         req.x2, req.y2 = gx, gy
         req.x3, req.y3 = bx, by
 
-        self.get_logger().info(f"Calling get_tcp_pos → "
-            f"RED ({rx:.3f},{ry:.3f}), GREEN ({gx:.3f},{gy:.3f}), BLUE ({bx:.3f},{by:.3f})")
+        self.get_logger().info(f"Calling get_tcp_pos → {coords_msg.data}")
 
         future = self.cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)

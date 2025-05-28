@@ -17,7 +17,7 @@ class PathPlanning {
       const rclcpp::Logger & logger,
       const std::string & description)
     {
-        moveit_msgs::msg::JointConstraint joint_constraint;
+        /*moveit_msgs::msg::JointConstraint joint_constraint;
         joint_constraint.joint_name = "shoulder_lift_joint";
         joint_constraint.position = -0.79;       // Center of allowed range
         joint_constraint.tolerance_below = 0.79; // 0.79 rad below
@@ -28,7 +28,7 @@ class PathPlanning {
         path_constraints.joint_constraints.push_back(joint_constraint);
 
         // Apply to MoveGroupInterface
-        move_group.setPathConstraints(path_constraints);
+        move_group.setPathConstraints(path_constraints);*/
 
         move_group.setJointValueTarget(joint_targets);
 
@@ -37,11 +37,11 @@ class PathPlanning {
         if (success) {
             RCLCPP_INFO(logger, "Planning to %s successful, executing...", description.c_str());
             move_group.execute(plan);
-            move_group.clearPathConstraints();
+            //move_group.clearPathConstraints();
             return true;
         } else {
             RCLCPP_ERROR(logger, "Planning to %s failed!", description.c_str());
-            move_group.clearPathConstraints();
+            //move_group.clearPathConstraints();
             rclcpp::shutdown();
             return false;
         }
@@ -54,7 +54,7 @@ class PathPlanning {
       const rclcpp::Logger & logger,
       const std::string & description)
     {
-        moveit_msgs::msg::JointConstraint jc_shoulder_lift;
+        /*moveit_msgs::msg::JointConstraint jc_shoulder_lift;
         jc_shoulder_lift.joint_name = "shoulder_lift_joint";
         jc_shoulder_lift.position = -0.79;       // Center of allowed range
         jc_shoulder_lift.tolerance_below = 0.79; // 0.79 rad below
@@ -81,7 +81,7 @@ class PathPlanning {
         path_constraints.joint_constraints.push_back(jc_shoulder_pan);
 
         // Apply to MoveGroupInterface
-        move_group.setPathConstraints(path_constraints);
+        move_group.setPathConstraints(path_constraints);*/
 
         move_group.setPoseTarget(target_pos);
 

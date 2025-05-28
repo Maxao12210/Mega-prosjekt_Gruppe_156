@@ -19,7 +19,7 @@ def generate_launch_description():
 
     # 2) Box detection node (color‐box finder)
     Node(
-        package='cube_pointer_robot',
+        package='camera_node',
         executable='box_detection_node',
         name='box_detection_node',
         parameters=[{
@@ -27,8 +27,19 @@ def generate_launch_description():
         }],
     ),
 
+    # 2) Box detection node (color‐box finder)
     Node(
-        package='cube_pointer_robot',
+        package='camera_node',
+        executable='camera_debug_node',
+        name='camera_debug_node',
+        parameters=[{
+            'camera_topic': '/image_raw'
+        }],
+    ),
+
+
+    Node(
+        package='camera_node',
         executable='coordinator_test_node',
         name='coordinator_test_node',
 

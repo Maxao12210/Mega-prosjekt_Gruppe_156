@@ -122,7 +122,7 @@ int main(int argc, char * argv[])
   camera_object.header.frame_id = move_group.getEndEffectorLink();
   geometry_msgs::msg::Pose grab_pose;
   grab_pose.orientation.w = 1.0;
-  grab_pose.position.z = 0.6;
+  grab_pose.position.z = 0.05;
 
   camera_object.primitives.push_back(camera_primitives);
   camera_object.primitive_poses.push_back(grab_pose);
@@ -171,11 +171,26 @@ int main(int argc, char * argv[])
   geometry_msgs::msg::Pose thirdPose = thirdPosition.getPose();
 
   // Move above Object positions
+  RCLCPP_INFO(logger, "About to move to target 1");
   plan_and_execute.plan_and_execute_tcp(move_group, firstPose, logger, "target position1");
 
+  RCLCPP_INFO(logger, "Home position reached, now moving to reference position…");
+
+  plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
+
+  RCLCPP_INFO(logger, "About to move to target 2");
   plan_and_execute.plan_and_execute_tcp(move_group, secondPose, logger, "target position2");
 
+  RCLCPP_INFO(logger, "Home position reached, now moving to reference position…");
+
+  plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
+
+
+  RCLCPP_INFO(logger, "About to move to target 3");
+
   plan_and_execute.plan_and_execute_tcp(move_group, thirdPose, logger, "target position3");
+
+  RCLCPP_INFO(logger, "Home position reached, now moving to reference position…");
 
   // MOve robot to first ref point
   plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
