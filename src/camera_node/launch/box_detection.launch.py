@@ -17,6 +17,7 @@ def generate_launch_description():
         }],
     ),
 
+
     # 2) Box detection node (color‐box finder)
     Node(
         package='camera_node',

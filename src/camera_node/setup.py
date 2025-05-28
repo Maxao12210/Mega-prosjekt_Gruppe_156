@@ -14,10 +14,10 @@ setup(
     ]),
     data_files=[
         ('share/ament_index/resource_index/packages',
-            [os.path.join('../camera_node/resource', package_name)]),
+         ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         # Include launch files
-        ('share/' + package_name + '/launch', glob('bringup/launch/*.py')),
+        ('share/' + package_name + '/launch', glob('launch/*.py')),
         # Include config files
         ('share/' + package_name + '/config', glob('bringup/config/*.yaml')),
         ('share/' + package_name + '/camera_config', glob('camera_node/config/*.yaml')),
@@ -36,7 +36,8 @@ setup(
             'robot_controller = robot_control.robot_controller:main',
             'box_detection_node = camera_node.box_detection_node:main',
             'coordinator_test_node = camera_node.coordinator_test_node:main',
-            'Camera_debug_node = CameraDebugNode:main',
+            'camera_debug_node = camera_node.camera_debug_node:main',
+
         ],
     },
 )
