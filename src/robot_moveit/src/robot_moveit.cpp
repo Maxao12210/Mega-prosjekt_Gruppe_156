@@ -108,15 +108,18 @@ int main(int argc, char * argv[])
 
   // Spin/wait for callback to set the flag
   while (!response_check) {
-    rclcpp::spin_some(node);
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-    plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef2, logger, "reference position");
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000)); // avoid busy loop
-    if (!response_check) {
-      plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
-      std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    for (int i=0; i<=2; i++) {
+      rclcpp::spin_some(node);
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef2, logger, "reference position");
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000)); // avoid busy loop
+      if (!response_check) {
+        plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     }
+    }
+    rclcpp::shutdown();
   }
 
   response_check = false;
