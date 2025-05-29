@@ -1,6 +1,6 @@
 #include <algorithm>  // for std::min, std::max
 #include <memory>
-#include "staticPositions.h"
+#include "staticPositions.hpp"
 #include "referencePosition.hpp"
 #include "PlanningExecute.hpp"
 #include  "CameraBracket.hpp"

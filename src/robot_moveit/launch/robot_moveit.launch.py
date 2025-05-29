@@ -5,7 +5,7 @@ def generate_launch_description():
     # Create and return the LaunchDescription object
     
      robot_moveit_node = Node(   
-            package='<robot_moveit_package>',
+            package='<robot_moveit>',
             executable='<robot_moveit.cpp>',
             name='<robot_moveit>',
             namespace='<namespace>',  
@@ -15,6 +15,4 @@ def generate_launch_description():
         ),
     
     
-    return LaunchDescription([
-   robot_moveit_launch
-    ])
+     return LaunchDescription([robot_moveit_node])
