@@ -2,29 +2,32 @@
 #include <memory>
 #include "staticPositions.h"
 #include "referencePosition.hpp"
-#include "PathPlanning.hpp"
+#include "PlanningExecute.hpp"
 #include  "CameraBracket.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
-//#include <moveit/planning_scene_interface/planning_scene_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include "object_reference_msg/srv/object_reference.hpp"
 
 // Source link: https://moveit.picknik.ai/main/doc/tutorials/visualizing_in_rviz/visualizing_in_rviz.html
 
-PathPlanning plan_and_execute;
+// Create a planning and execute object
+PlanningExecute plan_and_execute;
 
+// Create home position with coordinates
 staticPositions homePosition("Home position", 0.000,-1.571,-0.000,0.000,0.000,0.000);
 std::map<std::string, double> coordinatesForHome = homePosition.getCoordinatesMap();
 
+// Create picture reference with coordinates
 staticPositions ref1("Position nr.1", 0.005, -1.060, 0.3875, -0.930, -1.57,-0.0005);
 std::map<std::string, double> coordinatesForRef1 = ref1.getCoordinatesMap();
 
-// Not accurate values
+// Values to lock the TCP in an orientation while moving to box positions
 double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, orientation_w = -0.045;
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
-double position_z = 0.25;
+double position_z = 0.25; // Pointing hight
 
+// Restrictions for
 double min_x = 0.15;
 double min_y = -0.13;
 double max_x = 0.6;
@@ -32,33 +35,6 @@ double max_y = 0.45;
 
 bool response_check = false;
 
-// Get tcp pos values from get_tcp_pos service
-/*void get_tcp_pos(const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request> &request,
-                 const std::shared_ptr<object_reference_msg::srv::ObjectReference::Response> &response)
-{
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\nx1: %f" " y1: %f" "x2: %f" "y2: %f" "x3: %f" "y3: %f",
-                  request->x1, request->y1, request->x2, request->y2, request->x3, request->y3);
-
-    if ((min_x <= request->x1 && request->x1 <= max_x) &&
-        (min_x <= request->x2 && request->x2 <= max_x) &&
-        (min_x <= request->x3 && request->x3 <= max_x) &&
-        (min_y <= request->y1 && request->y1 <= max_y) &&
-        (min_y <= request->y2 && request->y2 <= max_y) &&
-        (min_y <= request->y3 && request->y3 <= max_y)) // Usikre verdier
-    {
-        target_x1 = request->x1;
-        target_y1 = request->y1;
-        target_x2 = request->x2;
-        target_y2 = request->y2;
-        target_x3 = request->x3;
-        target_y3 = request->y3;
-        response->success = true;
-    } else {
-        response->success = false;
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request failed!");
-    }
-    response_check = response->success;
-}*/
 void get_tcp_pos(
   const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request>  request,
   std::shared_ptr<object_reference_msg::srv::ObjectReference::Response>       response)

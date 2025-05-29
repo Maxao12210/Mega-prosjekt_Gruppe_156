@@ -5,10 +5,10 @@
 #ifndef PATHPLANNING_HPP
 #define PATHPLANNING_HPP
 
-class PathPlanning {
+class PlanningExecute {
     public:
 
-    PathPlanning() = default;
+    PlanningExecute() = default;
 
     // Helper function to plan and execute joint movements
     bool plan_and_execute_joint(
@@ -98,7 +98,7 @@ class PathPlanning {
         }
     }
 
-    ~PathPlanning() = default;
+    ~PlanningExecute() = default;
 };
 
 #endif //PATHPLANNING_HPP

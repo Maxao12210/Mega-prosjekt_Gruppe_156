@@ -13,7 +13,6 @@ class TestCoordinator(Node):
         self.tcp_x = 0.37
         self.tcp_y = 0.110
         self.tcp_z = 0.418  # not used here, but available
-
         self.cam_off_x = 0.07
         self.cam_off_y = 0.10
 
@@ -68,7 +67,7 @@ class TestCoordinator(Node):
 
         # 2) camera origin in world = TCP + camera offset
         cam_x = self.tcp_x + self.cam_off_x
-        cam_y = self.tcp_y    # assume no lateral Y offset
+        cam_y = self.tcp_y + self.cam_off_y
         # cam_z = self.tcp_z + self.cam_off_z  # if you later need Z
 
         # 3) world coords = camera_origin + projection
