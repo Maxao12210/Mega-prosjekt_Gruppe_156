@@ -15,6 +15,4 @@ def generate_launch_description():
         ),
     
     
-    return LaunchDescription([
-   robot_moveit_node
-    ])
+     return LaunchDescription([robot_moveit_node])
