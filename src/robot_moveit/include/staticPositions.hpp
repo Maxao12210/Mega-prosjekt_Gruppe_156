@@ -31,7 +31,7 @@ class staticPositions  {
         coordinatesMap["wrist_2_joint"] = wrist2Joint;
         coordinatesMap["wrist_3_joint"] = wrist3Joint;
     }
-
+    // Used during the debuging process, to find the best values for the position of the robot, when the camera takes the picture.
     void changeValues (const std::string& newName, double shoulderPan, double shoulderLift, double elbow, double wrist1, double wrist2, double wrist3){
         name = newName;
         shoulderPanJoint = shoulderPan;
