@@ -3,7 +3,7 @@
 #include "StaticPositions.hpp"
 #include "ReferencePosition.hpp"
 #include "PlanningExecute.hpp"
-#include  "CameraBracket.hpp"
+#include "CameraBracket.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -31,7 +31,7 @@ double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, or
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
 double position_z = 0.25; // Pointing hight
 
-// Restrictions for tcp x- and y positions to avoid invalid pathplaning
+// Restrictions for tcp x- and y positions to avoid invalid path planning
 double min_x = 0.15;
 double min_y = -0.13;
 double max_x = 0.6;
