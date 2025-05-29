@@ -30,7 +30,7 @@ def generate_launch_description():
         }],
     ),
 
-    # 2) Box detection node (color‐box finder)
+    # 2) Debugging for mask
     Node(
         package='camera_node',
         executable='camera_debug_node',
@@ -40,7 +40,7 @@ def generate_launch_description():
         }],
     ),
 
-
+    # 3) Starts coordinator
     Node(
         package='camera_node',
         executable='coordinator_test_node',
