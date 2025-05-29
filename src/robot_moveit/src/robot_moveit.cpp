@@ -113,13 +113,14 @@ int main(int argc, char * argv[])
       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
       std::this_thread::sleep_for(std::chrono::milliseconds(3000));
       plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef2, logger, "reference position");
-      std::this_thread::sleep_for(std::chrono::milliseconds(3000)); // avoid busy loop
-      if (!response_check) {
-        plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      if (i == 2) {
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Not all cubes found, shutting down");
+        rclcpp::shutdown();
     }
     }
-    rclcpp::shutdown();
   }
 
   response_check = false;
