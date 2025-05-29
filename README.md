@@ -12,6 +12,7 @@
   - moveit/planning_scene_interface
   - rclcpp
   - Cmake (should be included with ros2 jazzy)
+- Three cubes, red, green and blue
 
 ## Building the project in Ubuntu:
 Open a terminal:
