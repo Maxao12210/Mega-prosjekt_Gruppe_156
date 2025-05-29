@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="camera" params="base_length base_width base_height disk_radius disk_height pointer_length pointer_width">
-
-    </xacro:macro>
-</robot>
