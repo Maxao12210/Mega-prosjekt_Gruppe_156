@@ -22,6 +22,10 @@ std::map<std::string, double> coordinatesForHome = homePosition.getCoordinatesMa
 staticPositions ref1("Position nr.1", 0.005, -1.060, 0.3875, -0.930, -1.57,-0.0005);
 std::map<std::string, double> coordinatesForRef1 = ref1.getCoordinatesMap();
 
+// Create picture reference with coordinates
+staticPositions ref2("Position nr.1", 0.005, -0.777, 0.3064, -1.132, -1.57,-0.0005);
+std::map<std::string, double> coordinatesForRef2 = ref2.getCoordinatesMap();
+
 // Values to lock the TCP in an orientation while moving to box positions
 double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, orientation_w = -0.045;
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
@@ -107,7 +111,13 @@ int main(int argc, char * argv[])
   while (!response_check) {
     rclcpp::spin_some(node);
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // avoid busy loop
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef2, logger, "reference position");
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000)); // avoid busy loop
+    if (!response_check) {
+      plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
+      std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    }
   }
 
   response_check = false;
