@@ -1,9 +1,9 @@
 #include <algorithm>  // for std::min, std::max
 #include <memory>
-#include "StaticPositions.hpp"
-#include "ReferencePosition.hpp"
-#include "PlanningExecute.hpp"
-#include "CameraBracket.hpp"
+#include "../include/robot_moveit/StaticPositions.hpp"
+#include "robot_moveit/ReferencePosition.hpp"
+#include "robot_moveit/PlanningExecute.hpp"
+#include "robot_moveit/CameraBracket.hpp"
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 #include <rclcpp/rclcpp.hpp>

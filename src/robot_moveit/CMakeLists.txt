@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 find_package(object_reference_msg REQUIRED)
 
 add_executable(robot_moveit src/robot_moveit.cpp)
-target_include_directories(robot_moveit PUBLIC
+target_include_directories(robot_moveit PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
