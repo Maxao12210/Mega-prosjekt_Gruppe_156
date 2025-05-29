@@ -108,19 +108,19 @@ int main(int argc, char * argv[])
 
   // Spin/wait for callback to set the flag
   while (!response_check) {
-    int i = 0;
-    for (i<=2; i++) {
+    for (int i = 0;i<=2; i++) {
       rclcpp::spin_some(node);
       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
       std::this_thread::sleep_for(std::chrono::milliseconds(3000));
       plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef2, logger, "reference position");
       std::this_thread::sleep_for(std::chrono::milliseconds(3000));
       plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
-      std::this_thread::sleep_for(std::chrono::milliseconds(3000)); 
-    }
-    if (i == 2) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      if (!response_check && i == 2) {
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Not all cubes found, shutting down");
         rclcpp::shutdown();
+    }
+
     }
   }
 
