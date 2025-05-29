@@ -24,7 +24,7 @@ bool create_camera_object(
         camera_object.header.frame_id = move_group.getEndEffectorLink();
         geometry_msgs::msg::Pose grab_pose;
         grab_pose.orientation.w = 1.0;
-        grab_pose.position.y = -0.04;
+        grab_pose.position.y = 0.0;
         grab_pose.position.z = 0.05;
 
         camera_object.primitives.push_back(camera_primitives);

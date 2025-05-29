@@ -91,7 +91,7 @@ int main(int argc, char * argv[])
   rclcpp::Service<object_reference_msg::srv::ObjectReference>::SharedPtr service =
    node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &get_tcp_pos);
 
-  move_group.setStartState(*move_group.getCurrentState());
+  //move_group.setStartState(*move_group.getCurrentState());
 
   RCLCPP_INFO(logger, "About to move to home position…");
 
