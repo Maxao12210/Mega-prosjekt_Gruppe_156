@@ -2,6 +2,8 @@
 // Created by marcin on 5/27/25.
 //
 
+// Source link: https://moveit.picknik.ai/main/doc/tutorials/visualizing_in_rviz/visualizing_in_rviz.html
+
 #ifndef PATHPLANNING_HPP
 #define PATHPLANNING_HPP
 
@@ -17,6 +19,8 @@ class PlanningExecute {
       const rclcpp::Logger & logger,
       const std::string & description)
     {
+        // Attempt for joint restrictions under path planning
+
         /*moveit_msgs::msg::JointConstraint joint_constraint;
         joint_constraint.joint_name = "shoulder_lift_joint";
         joint_constraint.position = -0.79;       // Center of allowed range

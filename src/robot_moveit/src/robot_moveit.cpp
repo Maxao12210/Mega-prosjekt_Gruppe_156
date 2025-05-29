@@ -1,7 +1,7 @@
 #include <algorithm>  // for std::min, std::max
 #include <memory>
-#include "staticPositions.hpp"
-#include "referencePosition.hpp"
+#include "StaticPositions.hpp"
+#include "ReferencePosition.hpp"
 #include "PlanningExecute.hpp"
 #include  "CameraBracket.hpp"
 
@@ -15,15 +15,15 @@
 PlanningExecute plan_and_execute;
 
 // Create home position with coordinates
-staticPositions homePosition("Home position", 0.000,-1.571,-0.000,0.000,0.000,0.000);
+StaticPositions homePosition("Home position", 0.000,-1.571,-0.000,0.000,0.000,0.000);
 std::map<std::string, double> coordinatesForHome = homePosition.getCoordinatesMap();
 
-// Create picture reference with coordinates
-staticPositions ref1("Position nr.1", 0.005, -1.060, 0.3875, -0.930, -1.57,-0.0005);
+// Create first position for picture reference with coordinates
+StaticPositions ref1("Position nr.1", 0.005, -1.060, 0.3875, -0.930, -1.57,-0.0005);
 std::map<std::string, double> coordinatesForRef1 = ref1.getCoordinatesMap();
 
-// Create picture reference with coordinates
-staticPositions ref2("Position nr.1", 0.005, -0.777, 0.3064, -1.132, -1.57,-0.0005);
+// Create second position for picture reference with coordinates
+StaticPositions ref2("Position nr.1", 0.005, -0.777, 0.3064, -1.132, -1.57,-0.0005);
 std::map<std::string, double> coordinatesForRef2 = ref2.getCoordinatesMap();
 
 // Values to lock the TCP in an orientation while moving to box positions
@@ -31,15 +31,17 @@ double orientation_x = 0.709, orientation_y = -0.704, orientation_z = -0.023, or
 double target_x1, target_y1, target_x2, target_y2, target_x3, target_y3;
 double position_z = 0.25; // Pointing hight
 
-// Restrictions for
+// Restrictions for tcp x- and y positions to avoid invalid pathplaning
 double min_x = 0.15;
 double min_y = -0.13;
 double max_x = 0.6;
 double max_y = 0.45;
 
+// Global check for acquired box position to robot tcp
 bool response_check = false;
 
-void get_tcp_pos(
+// Callback function to get tcp x- and y positions for robot tcp
+void get_tcp_pos_callback(
   const std::shared_ptr<object_reference_msg::srv::ObjectReference::Request>  request,
   std::shared_ptr<object_reference_msg::srv::ObjectReference::Response>       response)
 {
@@ -67,8 +69,6 @@ void get_tcp_pos(
     target_x3, target_y3);
 
   response->success = true;
-
-
   response_check = true;
 }
 
@@ -89,13 +89,12 @@ int main(int argc, char * argv[])
   // Add camera collision object
   create_camera_object(move_group, planning_scene_interface, logger);
 
+  // Add table collision object
   create_table_object(move_group, planning_scene_interface, logger);
 
   // Start get_tcp_pos service
   rclcpp::Service<object_reference_msg::srv::ObjectReference>::SharedPtr service =
-   node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &get_tcp_pos);
-
-  //move_group.setStartState(*move_group.getCurrentState());
+   node->create_service<object_reference_msg::srv::ObjectReference>("get_tcp_pos",  &get_tcp_pos_callback);
 
   RCLCPP_INFO(logger, "About to move to home position…");
 
@@ -111,24 +110,25 @@ int main(int argc, char * argv[])
   while (!response_check) {
     rclcpp::spin_some(node);
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Waiting for ref pos");
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef2, logger, "reference position");
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000)); // avoid busy loop
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000)); // avoid busy loop
     if (!response_check) {
       plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
-      std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
   }
 
   response_check = false;
 
-  referencePosition firstPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x1, target_y1, position_z);
+  // Create positions for the three cubes with callback parameters
+  ReferencePosition firstPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x1, target_y1, position_z);
   geometry_msgs::msg::Pose firstPose = firstPosition.getPose();
 
-  referencePosition secondPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x2, target_y2, position_z);
+  ReferencePosition secondPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x2, target_y2, position_z);
   geometry_msgs::msg::Pose secondPose = secondPosition.getPose();
 
-  referencePosition thirdPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x3, target_y3, position_z);
+  ReferencePosition thirdPosition(orientation_x, orientation_y, orientation_z, orientation_w, target_x3, target_y3, position_z);
   geometry_msgs::msg::Pose thirdPose = thirdPosition.getPose();
 
   // Move above Object positions
@@ -145,7 +145,6 @@ int main(int argc, char * argv[])
   RCLCPP_INFO(logger, "Home position reached, now moving to reference position…");
 
   plan_and_execute.plan_and_execute_joint(move_group, coordinatesForRef1, logger, "reference position");
-
 
   RCLCPP_INFO(logger, "About to move to target 3");
 

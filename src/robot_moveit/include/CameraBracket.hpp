@@ -2,6 +2,9 @@
 // Created by marcin on 5/28/25.
 //
 
+// Source for this header file: https://moveit.picknik.ai/main/doc/examples/move_group_interface/move_group_interface_tutorial.html
+
+
 #ifndef CAMERABRACKET_HPP
 #define CAMERABRACKET_HPP
 #include <moveit/planning_scene_interface/planning_scene_interface.hpp>
@@ -13,6 +16,7 @@ bool create_camera_object(
 ) {
         moveit_msgs::msg::CollisionObject camera_object;
 
+        // Create camera
         camera_object.id = "camera";
         shape_msgs::msg::SolidPrimitive camera_primitives;
         camera_primitives.type = camera_primitives.BOX;
@@ -27,6 +31,7 @@ bool create_camera_object(
         grab_pose.position.y = 0.0;
         grab_pose.position.z = 0.05;
 
+        // Place camera in the frame by frame_id
         camera_object.primitives.push_back(camera_primitives);
         camera_object.primitive_poses.push_back(grab_pose);
         camera_object.operation = camera_object.ADD;

@@ -7,7 +7,7 @@
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 
-class referencePosition {
+class ReferencePosition {
     public:
         double orientation_x;
         double orientation_y;
@@ -18,7 +18,7 @@ class referencePosition {
         double position_z;
         geometry_msgs::msg::Pose pose;
 
-    referencePosition(double or_x, double or_y, double or_z, double or_w, double pos_x, double pos_y, double pos_z)
+    ReferencePosition(double or_x, double or_y, double or_z, double or_w, double pos_x, double pos_y, double pos_z)
        : orientation_x(or_x), orientation_y(or_y), orientation_z(or_z), orientation_w(or_w), position_x(pos_x), position_y(pos_y), position_z(pos_z)
     {
        pose.orientation.x = orientation_x;
@@ -34,7 +34,7 @@ class referencePosition {
         return pose;
     }
 
-    ~referencePosition()=default;
+    ~ReferencePosition()=default;
 };
 
 #endif //STATIC_POS_HPP
