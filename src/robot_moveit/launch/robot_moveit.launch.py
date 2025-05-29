@@ -8,9 +8,8 @@ def generate_launch_description():
             package='robot_moveit',
             executable='robot_moveit',
             name='robot_moveit',
-            namespace='namespace',
             output='screen',          
-            #parameters=[{'param_name': 'param_value'}],  # change based on the coordinates taken from camera files
+            parameters=[{'robot_description': '/robot_description'}],  # change based on the coordinates taken from camera files
             #remappings=[('/old_topic', '/new_topic')]    #
         ),
     

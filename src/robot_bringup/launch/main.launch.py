@@ -9,17 +9,17 @@ def generate_launch_description():
     box_detection_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('camera_node_package'),
+                get_package_share_directory('camera_node'),
                 'launch',
                 'box_detection.launch.py')))
     
     robot_moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('robot_moveit_package'),
+                get_package_share_directory('robot_moveit'),
                 'launch',
                 'robot_moveit.launch.py'
             )
         )
     )
-    return LaunchDescription([box_detection_launch, robot_moveit_launch])
+    return LaunchDescription([robot_moveit_launch, box_detection_launch])
